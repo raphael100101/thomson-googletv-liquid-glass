@@ -22,7 +22,7 @@ Le Play Store, Chromecast intégré et la TV en direct restent disponibles.
 ## Installation
 Dans **PowerShell** (menu Démarrer > « PowerShell ») :
 ```powershell
-git clone https://github.com/<ton-compte>/thomson-googletv-liquid-glass.git
+git clone https://github.com/raphael100101/thomson-googletv-liquid-glass.git
 cd thomson-googletv-liquid-glass
 powershell -ExecutionPolicy Bypass -File .\setup.ps1 -TvIp 192.168.1.50 -Lat 48.85 -Lon 2.35
 ```
