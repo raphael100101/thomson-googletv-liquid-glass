@@ -16,9 +16,14 @@ com.android.tv.feedbackconsent
 com.google.android.play.games
 com.google.android.youtube.tvmusic
 
-# --- Thomson : à compléter après .\inventaire.ps1 ---
-# Exemple : un mode démo / magasin, une appli de pubs ou de recommandations du fabricant.
+# --- Thomson (relevés sur une 55QG7C14, Android 14, firmware UKRC.260302.020) ---
 # Ne mets ici que des applis dont tu connais le rôle.
+# Mode démo magasin (vitrine en boucle en boutique)
+com.realtek.retailmode
+# Anoki ACR : reconnaissance de ce qui est regardé, pour la pub ciblée (consentement / collecte)
+tv.anoki.acr.anokiacroptin
+# Personnalisation de l'accueil par le fabricant (applis et rangées mises en avant)
+com.realtek.leanbacklauncher.partnercustomizer
 
 # --- Firmware d'origine TCL (testés sur une TCL 65C845) ---
 # Ignorés si ta Thomson n'a pas ces paquets.
