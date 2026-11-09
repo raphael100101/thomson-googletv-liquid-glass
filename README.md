@@ -20,7 +20,9 @@ Le Play Store, Chromecast intégré et la TV en direct restent disponibles.
 4. Sur le PC, il faut **Git**, **Python 3** et **Android Studio** (qui fournit Java et le SDK Android pour compiler le lanceur). Le script propose de les installer avec `winget` s'ils manquent. Après l'installation d'Android Studio, **ouvre-le une fois** et laisse l'assistant installer le SDK (choix « Standard », accepte les licences).
 
 ## Installation
-Dans **PowerShell** (menu Démarrer > « PowerShell ») :
+**Le plus simple** : sur GitHub, bouton vert **Code > Download ZIP**, décompresse, puis double-clique **`installer.cmd`** et tape l'IP de la télé. (`inventaire.cmd` fait la même chose pour l'inventaire.)
+
+**En ligne de commande**, dans PowerShell (menu Démarrer > « PowerShell ») :
 ```powershell
 git clone https://github.com/raphael100101/thomson-googletv-liquid-glass.git
 cd thomson-googletv-liquid-glass
@@ -62,6 +64,7 @@ Les sauvegardes sont dans `backup-…/` : **garde-les et ne les publie jamais** 
 ## Fichiers
 | Fichier | Rôle |
 |---|---|
+| `installer.cmd` / `inventaire.cmd` | Raccourcis à double-cliquer |
 | `setup.ps1` | Installation complète, en 7 étapes |
 | `backup.ps1` | Sauvegarde de l'état de la télé (lancé par `setup.ps1`) |
 | `restore.ps1` | Retour à l'état d'origine |

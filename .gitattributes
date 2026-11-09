@@ -3,3 +3,4 @@
 *.patch -text
 *.jpg binary
 *.png binary
+*.cmd text eol=crlf
