@@ -70,11 +70,28 @@ if ($OutilsSeulement) {
     return
 }
 
-# Le lanceur se compile avec Java 17+ et le SDK Android : Android Studio fournit les deux.
-$jbr = Get-ChildItem 'C:\Program Files\Android' -Directory -ErrorAction SilentlyContinue |
-    ForEach-Object { Join-Path $_.FullName 'jbr' } | Where-Object { Test-Path "$_\bin\java.exe" } | Select-Object -First 1
+# Le lanceur se compile avec le SDK Android (fourni par Android Studio) et Gradle 8.9,
+# qui ne tourne qu'avec Java 17 à 22. Les Android Studio récents embarquent Java 25 (refusé par Gradle 8.9) :
+# on cherche donc un Java compatible, et on installe Microsoft OpenJDK 21 s'il n'y en a aucun.
+function Get-JdkMajor([string]$Dir) {
+    if (-not $Dir -or -not (Test-Path -LiteralPath "$Dir\bin\java.exe") -or -not (Test-Path -LiteralPath "$Dir\release")) { return 0 }
+    $m = Select-String -LiteralPath "$Dir\release" -Pattern '^JAVA_VERSION="(\d+)' | Select-Object -First 1
+    if ($m) { [int]$m.Matches[0].Groups[1].Value } else { 0 }
+}
+function Find-Jdk {
+    $cands = @($env:JAVA_HOME)
+    $cands += Get-ChildItem 'C:\Program Files\Android' -Directory -ErrorAction SilentlyContinue | ForEach-Object { Join-Path $_.FullName 'jbr' }
+    foreach ($root in 'C:\Program Files\Microsoft', 'C:\Program Files\Eclipse Adoptium', 'C:\Program Files\Java') {
+        $cands += Get-ChildItem $root -Directory -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+    }
+    $cands | Where-Object { $v = Get-JdkMajor $_; $v -ge 17 -and $v -le 22 } | Select-Object -First 1
+}
+$studio = Get-ChildItem 'C:\Program Files\Android' -Directory -ErrorAction SilentlyContinue |
+    Where-Object { Test-Path (Join-Path $_.FullName 'bin') } | Select-Object -First 1
 $sdk = if ($env:ANDROID_HOME) { $env:ANDROID_HOME } else { "$env:LOCALAPPDATA\Android\Sdk" }
-if (-not ($env:JAVA_HOME -and (Test-Path "$env:JAVA_HOME\bin\java.exe")) -and -not $jbr) { Install-WithWinget 'Google.AndroidStudio' 'Android Studio' }
+if (-not $studio -and -not (Test-Path (Join-Path $sdk 'platforms'))) { Install-WithWinget 'Google.AndroidStudio' 'Android Studio' }
+$jdk = Find-Jdk
+if (-not $jdk) { Install-WithWinget 'Microsoft.OpenJDK.21' 'Java 21 (le Java d''Android Studio est trop récent pour compiler le lanceur)' }
 if (-not (Test-Path (Join-Path $sdk 'platforms'))) {
     throw "Le SDK Android est introuvable ($sdk). Ouvre Android Studio une fois et laisse l'assistant installer le SDK (choix « Standard », accepte les licences), puis relance."
 }
@@ -113,7 +130,8 @@ $items = ($theme.dock_apps | ForEach-Object { "`n        <item>$_</item>" }) -jo
 $xml = [regex]::Replace($xml, '(?s)(<string-array name="dock_apps">).*?(</string-array>)', { param($m) $m.Groups[1].Value + $items + "`n    " + $m.Groups[2].Value })
 if (-not $LiveTv) {
     # Appli « TV en direct » : la première de cette liste présente sur la télé.
-    $LiveTv = @('com.mediatek.wwtv.tvcenter', 'com.tcl.tv', 'com.google.android.tv', 'com.droidlogic.tvsource') |
+    # com.realtek.tv : Thomson 55QG7C14 (puce Realtek).
+    $LiveTv = @('com.mediatek.wwtv.tvcenter', 'com.tcl.tv', 'com.realtek.tv', 'com.google.android.tv', 'com.droidlogic.tvsource') |
         Where-Object { $enabled -contains $_ } | Select-Object -First 1
 }
 if ($LiveTv) {
@@ -130,7 +148,7 @@ $props = (Get-Content -LiteralPath $gw) -replace 'networkTimeout=\d+', 'networkT
 Write-Lines $gw $props
 & git -C $Upstream apply (Join-Path $KitDir 'patches\horloge-centree.patch')
 if ($LASTEXITCODE -ne 0) { throw 'Le correctif « horloge centrée » ne s''applique pas.' }
-if ($jbr -and -not ($env:JAVA_HOME -and (Test-Path "$env:JAVA_HOME\bin\java.exe"))) { $env:JAVA_HOME = $jbr }
+$env:JAVA_HOME = $jdk
 $env:ANDROID_HOME = $sdk
 if (Confirm-Step 'Compiler et installer le lanceur (quelques minutes la première fois) ?') {
     Invoke-Upstream 'launcher\build-and-install.ps1' @() @{ TvHost = $TvIp }
