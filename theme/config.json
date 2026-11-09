@@ -1,0 +1,32 @@
+{
+ "dock_apps": [
+  "com.netflix.ninja",
+  "com.google.android.youtube.tv",
+  "com.disney.disneyplus",
+  "com.amazon.amazonvideo.livingroom"
+ ],
+ "background_color": "#090C14",
+ "wallpaper": true,
+ "wallpaper_true_color": true,
+ "wallpaper_dim": 30,
+ "wallpaper_rotation_minutes": 15,
+ "wallpaper_order": "sequential",
+ "wallpaper_moods": {
+  "morning": ["jour.jpg"],
+  "evening": ["jour.jpg"],
+  "night": ["nuit.jpg"]
+ },
+ "cinematic_home": true,
+ "cinematic_scrim": 30,
+ "cinematic_art": 0,
+ "ambient_glow": false,
+ "dock_glass": true,
+ "icon_only_buttons": true,
+ "icon_only_inputs": true,
+ "app_glow": true,
+ "glow_style": "horizon",
+ "focus_overshoot": false,
+ "advanced_effects": true,
+ "clock_wallpaper": true,
+ "clock_wallpaper_dim": 45
+}

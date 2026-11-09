@@ -1,0 +1,11 @@
+# Code du lanceur téléchargé par setup.ps1
+cleanyourtv/
+venv/
+# Données propres à ta télé : ne jamais publier
+backup-*/
+inventaire-*.txt
+.dernier-backup
+.premier-backup
+# Fichiers générés
+theme-pret/
+*.pyc

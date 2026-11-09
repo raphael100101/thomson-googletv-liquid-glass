@@ -1,0 +1,46 @@
+# Applis à désactiver sur une Google TV Thomson (55QG7C14).
+# Un paquet par ligne. Rien n'est désinstallé : les paquets sont seulement désactivés (réversible avec restore.ps1).
+# Les paquets absents de ta télé sont simplement ignorés. Mets un # devant une ligne pour garder l'appli.
+#
+# Pour voir ce qu'il y a vraiment sur ta télé : .\inventaire.ps1 -TvIp <IP>
+# puis ajoute ici, dans la section Thomson, les applis du fabricant dont tu n'as pas besoin.
+
+# --- Google TV (communs à toutes les marques) ---
+# Installe automatiquement les applis « recommandées » par le fabricant
+android.autoinstalls.config.google.gtvpai
+com.google.android.partnersetup
+# Envoi de retours et de statistiques d'usage
+com.google.android.feedback
+com.android.tv.feedbackconsent
+# Applis rarement utilisées (mets un # devant pour les garder)
+com.google.android.play.games
+com.google.android.youtube.tvmusic
+
+# --- Thomson : à compléter après .\inventaire.ps1 ---
+# Exemple : un mode démo / magasin, une appli de pubs ou de recommandations du fabricant.
+# Ne mets ici que des applis dont tu connais le rôle.
+
+# --- Firmware d'origine TCL (testés sur une TCL 65C845) ---
+# Ignorés si ta Thomson n'a pas ces paquets.
+com.tcl.ttvs
+com.tcl.logkit
+com.tcl.usercenter
+com.tcl.channelplus
+com.tcl.tv.tclhome_passive
+com.tcl.partnercustomizer
+com.tcl.interactive
+com.tcl.messagebox
+com.tcl.waterfall.overseas
+com.tcl.exhibit
+com.tcl.esticker
+com.tcl.hotelmenu
+com.tcl.ocean.instructions
+com.tcl.repairguide
+com.tcl.smartalexa
+com.tcl.guard
+
+# --- Assistant de configuration ---
+# Sinon il peut reprendre la main sur l'accueil. Protégé : il n'est pas désactivé s'il gère le Wi-Fi enregistré.
+com.google.android.tungsten.setupwraith
+
+# Gardés volontairement : Play Store, Chromecast intégré (mediashell), AirPlay, Paramètres, TV en direct.
