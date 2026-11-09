@@ -73,8 +73,30 @@ Les sauvegardes sont dans `backup-…/` : **garde-les et ne les publie jamais** 
 | `theme/config.json` | Réglages du thème et du dock |
 | `patches/horloge-centree.patch` | Horloge centrée sur l'écran de veille |
 
+## Dépannage
+**« Connexion impossible » alors que la télé est allumée et que le cast marche depuis un téléphone**
+Un **VPN** sur le PC (Cisco AnyConnect, VPN d'entreprise…) peut intercepter le réseau local 192.168.1.x : le PC n'atteint alors plus la télé. Déconnecte le VPN le temps de l'installation, ou active « Autoriser l'accès au réseau local » dans ses réglages s'il le permet. Pour vérifier, dans PowerShell : `Find-NetRoute -RemoteIPAddress <IP de la télé>` doit indiquer l'interface **Wi-Fi** (ou Ethernet), pas celle du VPN.
+
+**« Skipping com.google.android.tungsten.setupwraith: the saved Wi-Fi network belongs to it », puis l'accueil revient à Google TV**
+Les réseaux Wi-Fi enregistrés pendant la première configuration de la télé appartiennent à l'assistant de configuration (`setupwraith`). Tant qu'il est actif, il reprend l'écran d'accueil, et le kit refuse de le désactiver, car la télé effacerait ces réseaux.
+1. Sur la télé : Paramètres > Réseau et Internet > ton Wi-Fi > **Oublier le réseau**, puis reconnecte-toi au même réseau.
+2. Fais pareil pour **tous les autres réseaux enregistrés** (anciennes box, partages de connexion de téléphone…), ou supprime ceux qui ne servent plus. Un seul suffit à bloquer.
+3. Relance `setup.ps1`.
+
+Pour voir à qui appartient chaque réseau (`cname=…setupwraith` = bloquant) :
+```powershell
+. .\lib.ps1; Set-TvIp 192.168.1.50; Invoke-Tv 'dumpsys wifi' | Select-String 'SSID: "|cname='
+```
+Si seuls des réseaux **inutilisés** sont encore bloquants, tu peux forcer : `$env:FORCE_SETUPWRAITH='1'` puis relance `setup.ps1` (ces réseaux sont alors oubliés par la télé). Ne le fais **jamais** si le réseau sur lequel la télé est connectée en fait partie : elle perdrait le Wi-Fi.
+
+**« Unsupported class file major version 69 » pendant la compilation**
+Les Android Studio récents embarquent Java 25, trop récent pour Gradle 8.9 utilisé par le lanceur. `setup.ps1` cherche un Java 17 à 22 et propose d'installer Microsoft OpenJDK 21 s'il n'en trouve aucun (`winget install --id Microsoft.OpenJDK.21 -e`).
+
+**Des applis désactivées reviennent toutes seules**
+Tant que l'assistant de configuration est actif, il peut réactiver certaines applis (`feedbackconsent`, ACR Anoki…). Une fois l'assistant désactivé (voir plus haut), relance `setup.ps1` : il ne redésactive que ce qui est revenu.
+
 ## Limites à connaître
-- Kit **non encore testé sur une 55QG7C14** : fais l'inventaire, et garde les sauvegardes.
+- Kit **testé sur une 55QG7C14** (Android 14, firmware UKRC.260302.020). Sur un autre modèle ou firmware, fais l'inventaire d'abord, et garde les sauvegardes.
 - Préfère le Wi-Fi **5 GHz** ou l'Ethernet : les applis s'ouvrent plus vite.
 - Le fond de nuit n'est pas progressif : l'image change d'un coup.
 
